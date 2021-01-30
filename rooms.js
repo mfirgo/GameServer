@@ -1,6 +1,8 @@
-const MAX_ROOMS = 5
+//const MAX_ROOMS = 5
+const MAX_ROOMS = 1
 
-var freerooms = [1,2,3,4,5]
+//var freerooms = [1,2,3,4,5]
+var freerooms = [1]
 
 function joiningRoom(res, room) {
   console.log("joining")
@@ -10,8 +12,12 @@ function joiningRoom(res, room) {
 function createRoom(res) {
   console.log("creating")
   let room = freerooms.pop()
-  // TODO handle case when we do not have room
-  res.redirect('http://localhost:3000/room/' + room);
+  if (room === undefined){
+    // TODO write specific view for 'no rooms are currently available'
+    res.render('no_rooms_available.ejs')
+  } else{
+    res.redirect('http://localhost:3000/room/' + room);
+  }
 }
 
 function renderRoom(req, res) {

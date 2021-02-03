@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', () =>{
   let gameEnd = true
   let ready = false
   let enemyReady = false
-  let moveDone = -1
   let playerNum = 0
 
   const socket = io()
 
   socket.on('player-joined', num => {
-    if (num === -1)
+    if (num === -1){
       infoDisplay.innerHTML = "Sorry, the room is full :("
+    }
     else {
       playerNum = parseInt(num)
       console.log(`Joined ${playerNum}`)
@@ -41,13 +41,16 @@ document.addEventListener('DOMContentLoaded', () =>{
   })
 
   socket.on('enemy-ready', num => {
+    console.log('enemy-ready')
     playerReady(num)
     if (ready)
       startGame(socket)
   })
 
   socket.on('check-players', playerStatus => {
+    console.log('check-players')
     playerStatus.forEach((p, i) => {
+      console.log(`Checking ${i}, connected ` + p.connected + ' ready: ' + p.ready)
       if(p.connected)
         playerConnectionChange(i)
       if(p.ready)
@@ -64,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () =>{
     document.querySelector(`${player} .connected span`).classList.toggle('green')
     if (num == playerNum)
       document.querySelector(player).style.fontWeight = 'bold'
+
+    if(!gameEnd) {
+      gameFinished()
+      turnDisplay.innerHTML = ``
+      infoDisplay.innerHTML = "Enemy left - you won"
+    }
   }
 
   function createBoard(grid, squares, width, height) {
@@ -92,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   }
 
   function startGame(socket) {
-    if (!gameEnd)
+    if (!gameEnd || playerNum == -1)
       return
 
     console.log("startGame")
@@ -106,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () =>{
 
     if (enemyReady) {
       turnDisplay.innerHTML = `Player 1 move`
-      playerMove = 1
       infoDisplay.innerHTML = "Game in progress"
+      playerMove = 1
       gameEnd = false
     }
   }
@@ -146,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   }
 
   function checkRows() {
+    let sum = 0
     let count = 0
     let prev = 0
     for (let row = 0; row < height; row++) {
@@ -154,11 +164,17 @@ document.addEventListener('DOMContentLoaded', () =>{
         let res = commonCheck(position, count, prev)
         count = res[0]
         prev = res[1]
+        if (count != 0)
+          sum++
         if (count == inRow)
           return prev
       }
       prev = 0
     }
+
+    if(sum == height * width)
+      return -1
+
     return 0;
   }
 
@@ -179,27 +195,32 @@ document.addEventListener('DOMContentLoaded', () =>{
     return 0;
   }
 
-  function checkBoard() {
+  function gameFinished() {
+    gameEnd = true
+    ready = enemyReady = false
 
+    document.querySelector(`.p1 .ready span`).classList.toggle('green')
+    document.querySelector(`.p2 .ready span`).classList.toggle('green')
+  }
+
+  function checkBoard() {
     let res = checkRows()
     if (res == 0)
       res = checkColumns()
 
     if (res != 0) {
-      gameEnd = true
-      ready = enemyReady = false
-
-      document.querySelector(`.p1 .ready span`).classList.toggle('green')
-      document.querySelector(`.p2 .ready span`).classList.toggle('green')
-      infoDisplay.innerHTML = `Player ${res} won!`
+      gameFinished()
+      if (res == -1)
+        infoDisplay.innerHTML = `Draw!`
+      else
+        infoDisplay.innerHTML = `Player ${res} won!`
       turnDisplay.innerHTML = ""
     }
-
   }
 
   function clickSquare(square) {
     if(square.classList.contains('player1') ||
-       square.classList.contains('player2') ||
+       square.classList.contains('player0') ||
        playerNum != playerMove ||
        gameEnd)
       return

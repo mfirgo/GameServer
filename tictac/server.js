@@ -25,7 +25,13 @@ io.on('connection', socket => {
   }
 
   console.log(`New socket connection, player ${player}`)
+
+
   socket.emit('player-joined', player)
+  //TO DO - render that room is full
+  if(player == -1)
+    return
+
   socket.broadcast.emit('player-connection', player)
   
   socket.on('disconnect', () => {
@@ -41,8 +47,14 @@ io.on('connection', socket => {
 
   socket.on('check-players', () => {
     let playerStatus = []
-    for (let i in players)
-      players[i] === null ? playerStatus.push({connected: false, ready: false}) : playerStatus.push({connected: true, ready: false})
+    for (let i in players) {
+      if (players[i] === null)
+        playerStatus.push({connected: false, ready: false})
+      else if (players[i] === false)
+        playerStatus.push({connected: true, ready: false})
+      else
+        playerStatus.push({connected: true, ready: true})
+    }
     socket.emit('check-players', playerStatus)
   })
 
@@ -50,4 +62,5 @@ io.on('connection', socket => {
     console.log(`Square clicked by ${player}`, id)
     socket.broadcast.emit('square-clicked', id)
   })
+
 })

@@ -4,10 +4,12 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="/appjs.js"></script>
         <script>
+        //window.alert('joining room +'<%= id %>');
         window.addEventListener('load', function() {
             var socket = io();
-
-            socket.emit("join room", toString(id));
+            roomid = '<%= id %>'
+            console.log("room id: ", roomid)
+            socket.emit("join room", { roomID: roomid });
 
             socket.on('message', function(data) {
                 var t = document.getElementById('time');
@@ -22,7 +24,7 @@
             var btsend = document.getElementById('btsend');
             btsend.addEventListener('click', function() {
                 var txtmessage = document.getElementById('txtmessage');
-                socket.emit('chat message', txtmessage.value);
+                socket.emit('chat message', {roomID: roomid, msg: txtmessage.value});
             });
         
         });

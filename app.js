@@ -23,19 +23,18 @@ app.get("/room/:id",
 
 io.on('connection', function(socket) {
   console.log('client connected:' + socket.id);
-
-  socket.on("join room", (room_id) => {
+  socket.on("join room", (data) => {
     console.log('in room');
     
     //io.to(Newuser.roomname).emit('send data' , {username : Newuser.username,roomname : Newuser.roomname, id : socket.id})
     // io.to(socket.id).emit('send data' , {id : socket.id ,username:Newuser.username, roomname : Newuser.roomname });
     
-    var roomID = room_id
+    var roomID = data.roomID
     socket.join(roomID);
   });
-
+  
   socket.on('chat message', function(data) {
-      io.to(roomID).emit('chat message', data); // do wszystkich
+      io.to(data.roomID).emit('chat message', data.msg); // do wszystkich
       // socket.emit('chat message', data); // tylko do połączonego
   });
 });

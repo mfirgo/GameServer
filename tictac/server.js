@@ -8,6 +8,7 @@ const server = http.createServer(app)
 const io = socketio(server)
 
 app.use(express.static(path.join(__dirname, "tictac")))
+console.log(path.join(__dirname, "tictac"))
 
 server.listen(PORT, () => console.log(`Server started. port ${PORT}`))
 

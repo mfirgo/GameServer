@@ -1,4 +1,5 @@
 var http = require('http');
+const path = require('path')
 var express = require('express');
 var socket = require('socket.io');
 
@@ -7,6 +8,8 @@ var rooms = require('./rooms')
 
 var server = http.createServer(app);
 var io = socket(server);
+
+// źle app.use(express.static(path.join(__dirname, "tictac_")))
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -22,27 +25,48 @@ app.get("/room/:id",
   rooms.renderRoom(req, res);});
 
 io.on('connection', function(socket) {
+  var player = -1;
+  var roomid = "";
   console.log('client connected:' + socket.id);
+  
   socket.on("join room", (data) => {
     console.log('in room');
-    
-    //io.to(Newuser.roomname).emit('send data' , {username : Newuser.username,roomname : Newuser.roomname, id : socket.id})
-    // io.to(socket.id).emit('send data' , {id : socket.id ,username:Newuser.username, roomname : Newuser.roomname });
-    
-    var roomID = data.roomID
-    socket.join(roomID);
-  });
-  
-  socket.on('chat message', function(data) {
-      io.to(data.roomID).emit('chat message', data.msg); // do wszystkich
-      // socket.emit('chat message', data); // tylko do połączonego
-  });
-});
 
-setInterval( function() {
-  var date = new Date().toString();
-  io.emit( 'message', date.toString() );
-}, 1000 );
+    player = rooms.add_player(data.roomID);
+    
+    roomid = data.roomID
+    socket.join(roomid);
+  });
+
+  socket.emit('player-joined', player)
+  //TO DO - render that room is full
+  if(player == -1)
+    return
+
+  socket.to(roomid).emit('player-connection', player)
+  
+  socket.on('disconnect', () => {
+    console.log(`socket disconnection, player ${player}`)
+    rooms.player_to_value(player, roomid, null);
+    socket.to(roomid).emit('player-connection', player)
+  })
+
+  socket.on('player-ready', () => {
+    socket.to(roomid).emit('enemy-ready', player)
+    rooms.player_to_value(player, roomid, true)
+  })
+
+  socket.on('check-players', () => {
+    let playerStatus = rooms.check_players(roomid);
+
+    socket.emit('check-players', playerStatus)
+  })
+
+  socket.on('square-clicked', id => {
+    console.log(`Square clicked by ${player}`, id)
+    socket.to(roomid).emit('square-clicked', id)
+  })
+});
 
 app.use((req,res,next) =>{res.render('404.ejs', { url :req.url});});
 

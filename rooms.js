@@ -5,15 +5,18 @@ var usersinroom = {} // user counter for each room
 var rooms = {}
 
 function add_player(roomID) {
+  console.log('rooms: in add player to room', roomID)
   if(rooms[roomID]) {
+    console.log('in if')
     var playerID = rooms[roomID].n_players;
-    rooms[roomID].players = [];
-    rooms[roomID].players[playerID] = false;
+    //rooms[roomID].players = [];
+    //rooms[roomID].players[playerID] = false;
     rooms[roomID].n_players += 1;
     return playerID;
   }
+  console.log('outside if')
   rooms[roomID] = {n_players: 1};
-  rooms[roomID].players[0] = false;
+  rooms[roomID].players = [null, null];
   return 0;
 }
 
@@ -35,9 +38,9 @@ function check_players(roomID) {
 
 
 function joiningRoom(res, room) {
-  console.log("joining")
+  console.log("joining", room)
   usersinroom[room] +=1; // increment user counter
-  res.render('game.ejs')
+  res.render('tictac.ejs', {id: room})
 }
 
 function createRoom(res) {
@@ -53,8 +56,9 @@ function createRoom(res) {
 }
 
 function renderRoom(req, res) {
-  console.log("render")
+  console.log("render", req.params.id)
   let room = parseInt(req.params.id)
+  console.log("still here ", room)
 
   if (Number.isInteger(room)) {
     if (room > 0 && room <= MAX_ROOMS) {

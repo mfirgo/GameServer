@@ -10,11 +10,19 @@ var server = http.createServer(app);
 var io = socket(server);
 
 // źle app.use(express.static(path.join(__dirname, "tictac_")))
-
+//app.use( express.static('./tictac_'));
+app.use("/css", express.static(__dirname + "/views/css/"));
+app.use("/scripts", express.static(__dirname + "/views/scripts"));
 app.set('view engine', 'ejs');
 app.set('views', './views');
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+)
 
 app.get('/', (req, res) => {
+  console.log("got get request for index");
   res.render('index.ejs')
 });
 
@@ -22,6 +30,7 @@ server.listen(3000);
 
 app.get("/room/:id",
  (req, res) => { 
+  console.log("got get request for room", req.params.id)
   rooms.renderRoom(req, res);});
 
 io.on('connection', function(socket) {
@@ -29,42 +38,43 @@ io.on('connection', function(socket) {
   var roomid = "";
   console.log('client connected:' + socket.id);
   
-  socket.on("join room", (data) => {
-    console.log('in room');
+  socket.on("join room", data => {
+    console.log('server: in room', data.roomID);
 
     player = rooms.add_player(data.roomID);
-    
+    console.log('Player added', player)
     roomid = data.roomID
     socket.join(roomid);
+    socket.to(roomid).emit('player-joined', player)
+    socket.to(roomid).emit('player-connection', player)
   });
 
-  socket.emit('player-joined', player)
   //TO DO - render that room is full
-  if(player == -1)
-    return
+  //if(player == -1)
+  //  return
 
-  socket.to(roomid).emit('player-connection', player)
   
-  socket.on('disconnect', () => {
+  socket.on('disconnect', data => {
     console.log(`socket disconnection, player ${player}`)
     rooms.player_to_value(player, roomid, null);
-    socket.to(roomid).emit('player-connection', player)
+    socket.to(data.roomID).emit('player-connection', player)
   })
 
-  socket.on('player-ready', () => {
+  socket.on('player-ready', data => {
     socket.to(roomid).emit('enemy-ready', player)
     rooms.player_to_value(player, roomid, true)
   })
 
-  socket.on('check-players', () => {
-    let playerStatus = rooms.check_players(roomid);
+  socket.on('check-players', data => {
+    let playerStatus = rooms.check_players(data.roomID);
 
-    socket.emit('check-players', playerStatus)
+    socket.to(data.roomID).emit('check-players', playerStatus)
   })
 
-  socket.on('square-clicked', id => {
+  socket.on('square-clicked', data => {
+    id = data.id
     console.log(`Square clicked by ${player}`, id)
-    socket.to(roomid).emit('square-clicked', id)
+    socket.to(data.roomID).emit('square-clicked', id)
   })
 });
 

@@ -50,7 +50,9 @@ function createRoom(res) {
     // TODO write specific view for 'no rooms are currently available'
     res.render('no_rooms_available.ejs')
   } else{
-    usersinroom[room]=0;
+    rooms[room] = {n_players: 0};
+    rooms[room].players = [null, null];
+    // usersinroom[room]=0;
     res.redirect('http://localhost:3000/room/' + room);
   }
 }

@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   let ready = false
   let enemyReady = false
   let playerNum = 0
-
+  
   const socket = io()
   socket.emit("join room", {roomID: roomid});
   socket.on('player-joined', num => {

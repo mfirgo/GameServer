@@ -9,8 +9,6 @@ var rooms = require('./rooms')
 var server = http.createServer(app);
 var io = socket(server);
 
-// źle app.use(express.static(path.join(__dirname, "tictac_")))
-//app.use( express.static('./tictac_'));
 app.use("/css", express.static(__dirname + "/views/css/"));
 app.use("/scripts", express.static(__dirname + "/views/scripts"));
 app.set('view engine', 'ejs');

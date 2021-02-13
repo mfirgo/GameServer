@@ -14,14 +14,15 @@ function player_to_value(playerID, roomID, v) {
 
 function check_players(roomID) {
   var playerStatus = [];
-  for (let i in rooms[roomID]) {
-    if (players[i] === null)
+  for (let i in rooms[roomID].players) {
+    if (rooms[roomID].players[i] === null)
       playerStatus.push({connected: false, ready: false})
-    else if (players[i] === false)
+    else if (rooms[roomID].players[i] === false)
       playerStatus.push({connected: true, ready: false})
     else
       playerStatus.push({connected: true, ready: true})
   }
+  return playerStatus;
 }
 
 

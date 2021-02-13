@@ -20,21 +20,26 @@ app.use(
 )
 
 app.get('/', (req, res) => {
-  console.log("got get request for index");
+  // console.log("got get request for index");
   res.render('index.ejs')
+});
+
+app.post( '/', (req, res) => {
+  rooms.renderRoom(req, res);
 });
 
 server.listen(3000); 
 
-app.get("/room/:id",
- (req, res) => { 
+app.get("/room/:id", (req, res) => { 
   console.log("got get request for room", req.params.id)
-  rooms.renderRoom(req, res);});
+  res.render('tictac.ejs', {id: req.params.id});
+  // rooms.renderRoom(req, res);});
+});
 
 io.on('connection', function(socket) {
   var player = -1;
   var roomid = "";
-  console.log('client connected:' + socket.id);
+  console.log('client connected:', socket.id);
   
   socket.on("join room", data => {
     console.log('server: in room', data.roomID);

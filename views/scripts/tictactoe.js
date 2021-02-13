@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   })
 
   socket.on('square-clicked', id => {
-    print("got message squere-clicked")
+    // console.log("got message squere-clicked")
     revealSquare(usersSquares[id])
   })
 

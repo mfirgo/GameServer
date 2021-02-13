@@ -8,6 +8,11 @@
 </head>
 <body>
     <form method="POST">
+      <% if ( locals.message ) { %>
+        <div class="warning">
+            <%= locals.message %>
+        </div>
+        <% } %>
         <div>
             Input room name.
         </div>

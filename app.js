@@ -21,7 +21,8 @@ app.use(
 
 app.get('/', (req, res) => {
   // console.log("got get request for index");
-  res.render('index.ejs')
+  roomsTable = rooms.returnRooms();
+  res.render('index.ejs', {data: roomsTable});
 });
 
 app.post( '/', (req, res) => {

@@ -1,5 +1,18 @@
 var rooms = {}
 
+function returnRooms(){
+  var rooms_table = [];
+  let j = 0;
+  for (const [key, value] of Object.entries(rooms)) {
+    rooms_table[j] = {
+      name: key,
+      n_players: value.n_players
+    }
+    j += 1;
+  }
+  return rooms_table;
+}
+
 function add_player(roomID) {
   console.log('rooms: add player to room', roomID)
   var playerID = rooms[roomID].n_players;
@@ -15,6 +28,7 @@ function player_to_value(playerID, roomID, v) {
 function check_players(roomID) {
   var playerStatus = [];
   for (let i in rooms[roomID].players) {
+    console.log("test", i)
     if (rooms[roomID].players[i] === null)
       playerStatus.push({connected: false, ready: false})
     else if (rooms[roomID].players[i] === false)
@@ -25,7 +39,6 @@ function check_players(roomID) {
   return playerStatus;
 }
 
-
 function joiningRoom(res, room) {
   if(rooms[room].n_players < 2) {
     console.log("joining", room)
@@ -33,7 +46,10 @@ function joiningRoom(res, room) {
   }
   else {
     console.log("Tried to join full room");
-    res.render('index.ejs', {message: "Room is full. Please select another room."});
+    res.render('index.ejs', {
+      data: returnRooms(),
+      message: "Room is full. Please select another room."
+    });
   }
 }
 
@@ -60,5 +76,6 @@ module.exports = {
   renderRoom:renderRoom,
   add_player:add_player,
   player_to_value: player_to_value,
-  check_players: check_players
+  check_players: check_players,
+  returnRooms: returnRooms
 }

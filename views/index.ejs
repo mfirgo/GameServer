@@ -21,5 +21,24 @@
         <button>Confirm</button>
     </div>
     </form>
+    <table border="1" style="width: 50%">
+      <colgroup>
+        <col style="width: 3%;">
+        <col style="width: 6%;">
+        <col style="width: 3%;">
+       </colgroup>
+      <tr>
+          <th bgcolor="lightgray"> Number</th>
+          <th bgcolor="lightgray">Room name</th>
+          <th bgcolor="lightgray">Players in room</th>
+      </tr>
+      <% for( let i in locals.data ) { %>
+        <tr>
+          <th bgcolor="lightgray"><%= (Number(i) + Number(1)) %></th>
+          <th bgcolor="lightcyan"><%= locals.data[i].name %></th>
+          <th bgcolor="lightcyan"><%= locals.data[i].n_players %></th>
+        </tr>
+      <% } %>
+  </table>
 </body>
 </html>

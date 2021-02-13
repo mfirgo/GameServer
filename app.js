@@ -17,7 +17,7 @@ app.use(
   express.urlencoded({
     extended: true
   })
-)
+);
 
 app.get('/', (req, res) => {
   // console.log("got get request for index");
@@ -26,7 +26,16 @@ app.get('/', (req, res) => {
 });
 
 app.post( '/', (req, res) => {
-  rooms.renderRoom(req, res);
+  if(req.body.roomid)
+  {
+    rooms.renderRoom(req, res);
+  }
+  else {
+    res.render('index.ejs', {
+      data: rooms.returnRooms(),
+      message: "You need to write room name."
+    })
+  }
 });
 
 server.listen(3000); 
@@ -52,16 +61,11 @@ io.on('connection', function(socket) {
     socket.emit('player-joined', player)
     socket.to(roomid).emit('player-connection', player)
   });
-
-  //TO DO - render that room is full
-  //if(player == -1)
-  //  return
-
   
   socket.on('disconnect', data => {
     console.log(`socket disconnection, player ${player}`)
-    rooms.player_to_value(player, roomid, null);
-    socket.to(data.roomID).emit('player-connection', player)
+    rooms.player_left(roomid, player);
+    socket.to(roomid).emit('player-connection', player)
   })
 
   socket.on('player-ready', data => {
@@ -71,14 +75,13 @@ io.on('connection', function(socket) {
 
   socket.on('check-players', data => {
     let playerStatus = rooms.check_players(data.roomID);
-
     socket.emit('check-players', playerStatus)
   })
 
   socket.on('square-clicked', data => {
     id = data.id
     console.log(`Square clicked by ${player}`, id)
-    socket.to(data.roomID).emit('square-clicked', id)
+    socket.to(roomid).emit('square-clicked', id)
   })
 });
 

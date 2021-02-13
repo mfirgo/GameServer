@@ -15,10 +15,21 @@ function returnRooms(){
 
 function add_player(roomID) {
   console.log('rooms: add player to room', roomID)
-  var playerID = rooms[roomID].n_players;
+  var playerID;
+  if(rooms[roomID].players[0] === null) {
+    playerID = 0;
+  }
+  else {
+    playerID = 1;
+  }
   rooms[roomID].n_players += 1;
   rooms[roomID].players[playerID] = false;
   return playerID;
+}
+
+function player_left(roomID, player) {
+  player_to_value(player, roomID, null);
+  rooms[roomID].n_players -= 1;
 }
 
 function player_to_value(playerID, roomID, v) {
@@ -76,6 +87,7 @@ module.exports = {
   renderRoom:renderRoom,
   add_player:add_player,
   player_to_value: player_to_value,
+  player_left: player_left,
   check_players: check_players,
   returnRooms: returnRooms
 }

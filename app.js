@@ -48,7 +48,7 @@ io.on('connection', function(socket) {
     console.log('Player added', player)
     roomid = data.roomID
     socket.join(roomid);
-    socket.to(roomid).emit('player-joined', player)
+    socket.emit('player-joined', player)
     socket.to(roomid).emit('player-connection', player)
   });
 
@@ -71,7 +71,7 @@ io.on('connection', function(socket) {
   socket.on('check-players', data => {
     let playerStatus = rooms.check_players(data.roomID);
 
-    socket.to(data.roomID).emit('check-players', playerStatus)
+    socket.emit('check-players', playerStatus)
   })
 
   socket.on('square-clicked', data => {

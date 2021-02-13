@@ -66,7 +66,10 @@ io.on('connection', function(socket) {
     console.log(`socket disconnection, player ${player}`)
     rooms.player_left(roomid, player);
     socket.to(roomid).emit('player-connection', player)
-  })
+    socket.leave(roomid)
+    player = -1;
+    roomid = '';
+  });
 
   socket.on('player-ready', data => {
     socket.to(roomid).emit('enemy-ready', player)
@@ -76,7 +79,7 @@ io.on('connection', function(socket) {
   socket.on('check-players', data => {
     let playerStatus = rooms.check_players(data.roomID);
     socket.emit('check-players', playerStatus)
-  })
+  });
 
   socket.on('square-clicked', data => {
     id = data.id

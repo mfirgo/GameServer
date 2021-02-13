@@ -132,9 +132,10 @@ document.addEventListener('DOMContentLoaded', () =>{
   }
 
   function leaveRoom() {
-    if (!gameEnd)
-      return
-    //TODO
+    // if (!gameEnd)
+    //   return
+    // //TODO
+    location.href = '/';
   }
 
   function commonCheck(position, count, prev) {

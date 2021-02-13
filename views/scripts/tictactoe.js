@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   })
 
   socket.on('square-clicked', id => {
-    print("got message squere-clicked")
+    // console.log("got message squere-clicked")
     revealSquare(usersSquares[id])
   })
 
@@ -132,9 +132,10 @@ document.addEventListener('DOMContentLoaded', () =>{
   }
 
   function leaveRoom() {
-    if (!gameEnd)
-      return
-    //TODO
+    // if (!gameEnd)
+    //   return
+    // //TODO
+    location.href = '/';
   }
 
   function commonCheck(position, count, prev) {

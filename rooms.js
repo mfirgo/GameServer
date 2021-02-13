@@ -28,8 +28,13 @@ function add_player(roomID) {
 }
 
 function player_left(roomID, player) {
-  player_to_value(player, roomID, null);
-  rooms[roomID].n_players -= 1;
+  if(rooms[roomID].n_players === 1) {
+    delete rooms[roomID];
+  }
+  else {
+    player_to_value(player, roomID, null);
+    rooms[roomID].n_players -= 1;
+  }
 }
 
 function player_to_value(playerID, roomID, v) {

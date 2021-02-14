@@ -64,7 +64,7 @@ app.get('/usernameChange', (req, res)=>{
 app.post('/usernameChange', (req, res)=>{
   if(req.body.username){
     res.cookie('username', req.body.username);
-    res.redirect('http://localhost:3000');
+    res.redirect('/');
   } else {
     res.render('usernameChange.ejs', {
       username: get_username(req, res),

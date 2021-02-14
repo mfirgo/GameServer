@@ -58,7 +58,7 @@ function check_players(roomID) {
 function joiningRoom(res, room) {
   if(rooms[room].n_players < 2) {
     console.log("joining", room)
-    res.redirect('http://localhost:3000/room/' + room)
+    res.redirect('/room/' + room)
   }
   else {
     console.log("Tried to join full room");

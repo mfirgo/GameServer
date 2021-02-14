@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   const leaveButton = document.querySelector('#leave')
   const turnDisplay = document.querySelector('#whose-move')
   const infoDisplay = document.querySelector('#info')
-  console.log("in tictactoe script")
+  console.log("in fourinrow script")
   console.log("roomid", roomid)
   
   startButton.addEventListener('click', () => {startGame(socket)})
@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', () =>{
   let ready = false
   let enemyReady = false
   let playerNum = 0
-  
+
   const socket = io()
+
   socket.emit("join room", {roomID: roomid});
   socket.on('player-joined', num => {
-    console.log('got message: player-joined', num)
     if (num === -1){
       infoDisplay.innerHTML = "Sorry, the room is full :("
     }
@@ -61,8 +61,7 @@ document.addEventListener('DOMContentLoaded', () =>{
   })
 
   socket.on('square-clicked', id => {
-    // console.log("got message squere-clicked")
-    revealSquare(usersSquares[id])
+    revealSquare(usersSquares[getLowestSquareId(parseInt(id))])
   })
 
   function playerConnectionChange(num) {
@@ -132,10 +131,9 @@ document.addEventListener('DOMContentLoaded', () =>{
   }
 
   function leaveRoom() {
-    // if (!gameEnd)
-    //   return
-    // //TODO
-    location.href = '/';
+    if (!gameEnd)
+      return
+    //TODO
   }
 
   function commonCheck(position, count, prev) {
@@ -198,6 +196,42 @@ document.addEventListener('DOMContentLoaded', () =>{
     }
     return 0;
   }
+  function checkDiagonal() {
+    let count = 0
+    let prev = 0 
+    for(let row = 0; row < height - inRow + 1; row++) {
+      for(let col = 0; col < width - inRow + 1; col++) {
+        let ind = 0
+        while(col + ind < width && row + ind < height) {
+          let position = (row + ind) * width + col + ind
+          let res = commonCheck(position, count, prev)
+          count = res[0]
+          prev = res[1]
+          if (count == inRow)
+            return prev
+          ind++
+        }
+        prev = 0
+      }
+    }
+    for(let row = 0; row < height - inRow + 1; row++) {
+      for(let col = width-1; col >= 0 + inRow - 1; col--) {
+        let ind = 0
+        while(col - ind >= 0 + inRow - 1 && row + ind < height) {
+          let position = (row + ind) * width + col - ind
+          let res = commonCheck(position, count, prev)
+          count = res[0]
+          prev = res[1]
+          if (count == inRow)
+            return prev
+          ind++
+        }
+        prev = 0
+      }
+    }
+    
+    return 0;
+  }
 
   function gameFinished() {
     gameEnd = true
@@ -211,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () =>{
     let res = checkRows()
     if (res == 0)
       res = checkColumns()
+    if (res == 0)
+      res = checkDiagonal()
 
     if (res != 0) {
       gameFinished()
@@ -222,6 +258,20 @@ document.addEventListener('DOMContentLoaded', () =>{
     }
   }
 
+  function getLowestSquareId(id) {
+    var nextid = id + width
+    while(nextid < width * height) {
+      if(usersSquares[nextid].classList.contains('player1') ||
+         usersSquares[nextid].classList.contains('player0')) {
+          break;
+      }
+      id = nextid
+      nextid += width
+    }
+    console.log("next" + nextid)
+    return id
+  }
+
   function clickSquare(square) {
     if(square.classList.contains('player1') ||
        square.classList.contains('player0') ||
@@ -230,9 +280,11 @@ document.addEventListener('DOMContentLoaded', () =>{
       return
 
     console.log(`clicked by ${playerNum}, turn - ${playerMove}`)
-    let id = square.dataset.id
+    let id = parseInt(square.dataset.id)
+    console.log(id)
+    id = getLowestSquareId(id)
     socket.emit('square-clicked',{roomID: roomid, id: id})
-    revealSquare(square)
+    revealSquare(usersSquares[id])
   }
 
   function revealSquare(square) {

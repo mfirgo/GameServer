@@ -76,7 +76,7 @@ server.listen(process.env.PORT || 3000);
 
 app.get("/room/:id", (req, res) => { 
   console.log("got get request for room", req.params.id)
-  res.render('tictac.ejs', {id: req.params.id, username: get_username(req, res)});
+  res.render('fourinrow.ejs', {id: req.params.id, username: get_username(req, res)});
   // rooms.renderRoom(req, res);});
 });
 

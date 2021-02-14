@@ -72,7 +72,7 @@ app.post('/usernameChange', (req, res)=>{
   }
 })
 
-server.listen(process/env.PORT || 3000); 
+server.listen(process.env.PORT || 3000); 
 
 app.get("/room/:id", (req, res) => { 
   console.log("got get request for room", req.params.id)

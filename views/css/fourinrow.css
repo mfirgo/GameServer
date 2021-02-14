@@ -1,0 +1,63 @@
+body {
+  font-family: 'Goldman', cursive;
+}
+
+
+.grid-user {
+  margin: 2vmin;
+  display: grid;
+  background-color:  rgba(8, 16, 252, 0.891);
+  flex-wrap: wrap;
+  grid-template-rows: repeat(6, 10.0vmin);
+  grid-template-columns: repeat(7, 11.7vmin);
+}
+
+.grid div {
+  border: 1px solid rgba(0, 0, 0, 0.275);
+}
+
+.player1 {
+  background-color: red;
+  border-radius: 100%;
+}
+
+.player0 {
+   background-color: yellow;
+   border-radius: 100%;
+}
+
+.hidden-info {
+  font-size: 1rem;
+  align-items: center;
+  flex-direction: column;
+}
+.text {
+  margin: 1rem
+}
+
+.button {
+  font-size: inherit;
+  background-color: hsla(211, 100%, 50%, 0.727);
+  padding: .5em 1em;
+  cursor: pointer;
+  border-radius: .2em;
+  color: #333;
+}
+
+.connected span,
+.ready span {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: red;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+span.green {
+  background: green;
+}

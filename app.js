@@ -6,7 +6,8 @@ var cookieParser= require('cookie-parser');
 
 
 var app = express();
-var rooms = require('./rooms')
+var rooms = require('./rooms');
+const { env } = require('process');
 
 var server = http.createServer(app);
 var io = socket(server);
@@ -71,7 +72,7 @@ app.post('/usernameChange', (req, res)=>{
   }
 })
 
-server.listen(3000); 
+server.listen(process/env.PORT || 3000); 
 
 app.get("/room/:id", (req, res) => { 
   console.log("got get request for room", req.params.id)
